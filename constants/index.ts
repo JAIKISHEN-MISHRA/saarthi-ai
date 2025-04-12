@@ -96,27 +96,7 @@ export const mappings = {
   vercel: "vercel",
   "aws amplify": "amplify",
 };
-const voiceIds = [
-  "burt",
-  "marissa",
-  "andrea",
-  "sarah",
-  "phillip",
-  "steve",
-  "joseph",
-  "myra",
-  "paula",
-  "ryan",
-  "drew",
-  "paul",
-  "mrb",
-  "matilda",
-  "mark"
-];
-function getRandomVoiceId() {
-  const randomIndex = Math.floor(Math.random() * voiceIds.length);
-  return voiceIds[randomIndex];
-}
+
 
 export const interviewer: CreateAssistantDTO = {
   name: "Interviewer",
@@ -129,7 +109,7 @@ export const interviewer: CreateAssistantDTO = {
   },
   voice: {
     provider: "11labs",
-    voiceId: getRandomVoiceId(),
+    voiceId: "myra",
     stability: 0.4,
     similarityBoost: 0.8,
     speed: 0.9,
