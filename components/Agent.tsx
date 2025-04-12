@@ -1,27 +1,36 @@
-"use client"
-import  { useState ,useEffect} from 'react'
-import Image from 'next/image'
+"use client";
+
+import Image from "next/image";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 import { cn } from "@/lib/utils";
-import { useRouter } from 'next/navigation';
 import { vapi } from "@/lib/vapi.sdk";
 import { interviewer } from "@/constants";
 import { createFeedback } from "@/lib/actions/general.action";
 
-
-
 enum CallStatus {
-    INACTIVE = "INACTIVE",
-    CONNECTING = "CONNECTING",
-    ACTIVE = "ACTIVE",
-    FINISHED = "FINISHED",
-  }
-  interface SavedMessage {
-    role: "user" | "system" | "assistant";
-    content: string;
-  }
-const Agent = ({userName,userId,type,questions,interviewId,feedbackId}:AgentProps) => {
-    const router=useRouter();
-    const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.INACTIVE);
+  INACTIVE = "INACTIVE",
+  CONNECTING = "CONNECTING",
+  ACTIVE = "ACTIVE",
+  FINISHED = "FINISHED",
+}
+
+interface SavedMessage {
+  role: "user" | "system" | "assistant";
+  content: string;
+}
+
+const Agent = ({
+  userName,
+  userId,
+  interviewId,
+  feedbackId,
+  type,
+  questions,
+}: AgentProps) => {
+  const router = useRouter();
+  const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.INACTIVE);
   const [messages, setMessages] = useState<SavedMessage[]>([]);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [lastMessage, setLastMessage] = useState<string>("");
@@ -72,6 +81,7 @@ const Agent = ({userName,userId,type,questions,interviewId,feedbackId}:AgentProp
       vapi.off("error", onError);
     };
   }, []);
+
   useEffect(() => {
     if (messages.length > 0) {
       setLastMessage(messages[messages.length - 1].content);
@@ -104,12 +114,11 @@ const Agent = ({userName,userId,type,questions,interviewId,feedbackId}:AgentProp
     }
   }, [messages, callStatus, feedbackId, interviewId, router, type, userId]);
 
-
   const handleCall = async () => {
     setCallStatus(CallStatus.CONNECTING);
 
     if (type === "generate") {
-      await vapi.start(process.env.VAPI_WORKFLOW_ID!, {
+      await vapi.start(process.env.NEXT_PUBLIC_VAPI_WORKFLOW_ID!, {
         variableValues: {
           username: userName,
           userid: userId,
@@ -135,27 +144,41 @@ const Agent = ({userName,userId,type,questions,interviewId,feedbackId}:AgentProp
     setCallStatus(CallStatus.FINISHED);
     vapi.stop();
   };
-  
 
-    
   return (
     <>
-    <div className='call-view'>
-        <div className='card-interviewer'>
-            <div className='avatar'>
-                <Image src="/ai-avatar.png" alt="ai-avatar" width={65} height={54} className='object-cover'/>
-                {isSpeaking && <span className='animate-speak'></span>}
-            </div>
-            <h3>AI Interviewer</h3>
+      <div className="call-view">
+        {/* AI Interviewer Card */}
+        <div className="card-interviewer">
+          <div className="avatar">
+            <Image
+              src="/ai-avatar.png"
+              alt="profile-image"
+              width={65}
+              height={54}
+              className="object-cover"
+            />
+            {isSpeaking && <span className="animate-speak" />}
+          </div>
+          <h3>AI Interviewer</h3>
         </div>
-        <div className='card-border'>
-            <div className='card-content'>
-                <Image src="/user-avatar.png" alt='user-avatar'width={540} height={540} className='rounded-full object-cover size-[120px]'/>
-                <h3>{userName}</h3>
-            </div>
+
+        {/* User Profile Card */}
+        <div className="card-border">
+          <div className="card-content">
+            <Image
+              src="/user-avatar.png"
+              alt="profile-image"
+              width={539}
+              height={539}
+              className="rounded-full object-cover size-[120px]"
+            />
+            <h3>{userName}</h3>
+          </div>
         </div>
-    </div>
-    {messages.length > 0 && (
+      </div>
+
+      {messages.length > 0 && (
         <div className="transcript-border">
           <div className="transcript">
             <p
@@ -170,9 +193,9 @@ const Agent = ({userName,userId,type,questions,interviewId,feedbackId}:AgentProp
           </div>
         </div>
       )}
-    <div className='w-full flex justify-center'>
-    {callStatus !== "ACTIVE" ? (
-        
+
+      <div className="w-full flex justify-center">
+        {callStatus !== "ACTIVE" ? (
           <button className="relative btn-call" onClick={() => handleCall()}>
             <span
               className={cn(
@@ -188,14 +211,13 @@ const Agent = ({userName,userId,type,questions,interviewId,feedbackId}:AgentProp
             </span>
           </button>
         ) : (
-          <button className="btn-disconnect" onClick={() => handleDisconnect()}
->
+          <button className="btn-disconnect" onClick={() => handleDisconnect()}>
             End
           </button>
         )}
-    </div>
+      </div>
     </>
-  )
-}
+  );
+};
 
-export default Agent
+export default Agent;
