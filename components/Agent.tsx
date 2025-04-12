@@ -2,7 +2,7 @@
 import  { useState ,useEffect} from 'react'
 import Image from 'next/image'
 import { cn } from "@/lib/utils";
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { vapi } from "@/lib/vapi.sdk";
 import { interviewer } from "@/constants";
 import { createFeedback } from "@/lib/actions/general.action";
